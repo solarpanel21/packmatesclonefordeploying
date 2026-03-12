@@ -264,7 +264,7 @@ function checkNull($dataPoint) {
                     dropdown.style.display = 'block';
 
                     try {
-                    const res = await fetch(`http://localhost/packmates/geocode.php?name=${encodeURIComponent(query)}&count=10`);
+                    const res = await fetch(`geocode.php?name=?{encodeURIComponent(query)}&count=10`);
                     const data = await res.json();
 
                     if (data.error || !data.results || data.results.length === 0) {
@@ -442,5 +442,6 @@ function checkNull($dataPoint) {
 </body>
 
 </html>
+
 
 <?php $mysqli->close(); ?>
