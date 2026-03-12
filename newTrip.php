@@ -51,9 +51,6 @@ function checkNull($dataPoint) {
     } else {
         // Run weather chain to get tags
         $weather = fetch_weather($lat, $lon, $startdate, $enddate);
-
-    // Run weather chain to get tags
-    $weather = fetch_weather($lat, $lon, $startdate, $enddate);
     $tags = [];
     if ($weather) {
         if ($weather['temp_max'] > 30) $tags[] = 'warm';
@@ -122,6 +119,8 @@ function checkNull($dataPoint) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Packmates</title>
+    <link rel="icon" type="image/png" href="img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="img/favicon-16x16.png" sizes="16x16" />
     <link rel="stylesheet" href="style.css">
     <style>
         .activity-chips {
@@ -160,6 +159,10 @@ function checkNull($dataPoint) {
 </head>
 
 <body>
+    <div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,0.7);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+    <img src="img/loading.gif" alt="Loading..." style="width:80px;height:80px;">
+    <p style="font-family:'Syne',sans-serif;font-weight:600;color:#2D8C4E;">Creating your trip...</p>
+</div>
     <!--Side Navbar (keep on all pages)-->
     <nav class="sidebar">
         <div class="brand">
@@ -371,117 +374,71 @@ function checkNull($dataPoint) {
         </iframe>
 </div>
     </div>
+<script>
+    const PEXELS_KEY = 'vnk5OqRIBUtBdRV9LUp1oaAn2QiAB5lO0HL8GwM5WrRRQZt5GOaFlVIq';
 
-    <script>
-        const PEXELS_KEY = 'vnk5OqRIBUtBdRV9LUp1oaAn2QiAB5lO0HL8GwM5WrRRQZt5GOaFlVIq';
-
-        async function fetchCityImage(city) {
-            try {
-                const res = await fetch(
-                    `https://api.pexels.com/v1/search?query=${encodeURIComponent(city)}+downtown+skyline&orientation=landscape&per_page=15&size=large`,
-                    { headers: { Authorization: PEXELS_KEY } }
-                );
-                const data = await res.json();
-                const photos = data.photos || [];
-                if (!photos.length) return null;
-                const best = photos.reduce((a, b) => (a.width * a.height >= b.width * b.height ? a : b));
-                return best.src.original || null;
-            } catch (e) {
-                console.warn('City image fetch failed:', e);
-                return null;
-            }
+    async function fetchCityImage(city) {
+        try {
+            const res = await fetch(
+                `https://api.pexels.com/v1/search?query=${encodeURIComponent(city)}+downtown+skyline&orientation=landscape&per_page=15&size=large`,
+                { headers: { Authorization: PEXELS_KEY } }
+            );
+            const data = await res.json();
+            const photos = data.photos || [];
+            if (!photos.length) return null;
+            const best = photos.reduce((a, b) => (a.width * a.height >= b.width * b.height ? a : b));
+            return best.src.original || null;
+        } catch (e) {
+            console.warn('City image fetch failed:', e);
+            return null;
         }
-
-        // Activity chip toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('chips found:', document.querySelectorAll('.activity-chip').length);
-
-    document.querySelectorAll('.activity-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-        e.stopPropagation();
-        console.log('chip clicked:', chip.dataset.category);
-        chip.classList.toggle('selected');
-    });
-});
-        });
-
-        //collect selected chips into hidden input on submit
-        document.querySelector('form').addEventListener('submit', function() {
-       const selected = Array.from(document.querySelectorAll('.activity-chip.selected'))
-        .map(el => el.dataset.category)
-        .join(',');
-      document.getElementById('activityTagsInput').value = selected;
-        });
-
-        document.getElementById('saveTripBtn').addEventListener('click', async function () {
-            const destination = document.getElementById('tripDestination').value.trim();
-            const fromDate = document.getElementById('tripFromDate').value;
-            const toDate = document.getElementById('tripToDate').value;
-            const travelers = parseInt(document.getElementById('tripTravelers').value) || 1;
-            const activitiesRaw = document.getElementById('tripActivities').value;
-            const notes = document.getElementById('tripNotes').value;
-
-            if (!destination) { alert('Please enter a destination.'); return; }
-
-            this.textContent = 'Saving...';
-            this.disabled = true;
-
-            // Selected activity category chips
-            const activityCategories = Array.from(document.querySelectorAll('.activity-chip.selected'))
-                .map(el => el.dataset.category);
-
-            // Free-text itinerary activities
-            const activities = activitiesRaw
-                .split(',')
-                .map(a => a.trim())
-                .filter(a => a.length > 0)
-                .map(name => ({ name, type: 'Activity' }));
-
-            const tripData = { destination, fromDate, toDate, travelers, activityCategories, activities, notes };
-
-            const imageUrl = await fetchCityImage(destination);
-            if (imageUrl) tripData.imageUrl = imageUrl;
-
-            localStorage.setItem('currentTrip', JSON.stringify(tripData));
-            location.href = 'tripPreview.html';
-
-
-        });
-
-        document.querySelectorAll('.activity-chip').forEach(chip => {
-            chip.addEventListener('click', () => chip.classList.toggle('selected'));
-        });
-
-document.querySelector('button[name="save_trip"]').addEventListener('click', function() {
-    const btn = this;
-    const tripname = document.getElementById('tripname').value.trim();
-    const city = document.getElementById('tripCity').value.trim();
-    const startdate = document.getElementById('tripFromDate').value;
-    const enddate = document.getElementById('tripToDate').value;
-
-    if (tripname && city && startdate && enddate) {
-        setTimeout(() => {
-            btn.disabled = true;
-            btn.textContent = 'Creating Trip...';
-        }, 100);
     }
-});
 
-
-        const startInput = document.getElementById('tripFromDate');
-        const endInput   = document.getElementById('tripToDate');
-
-        const today = new Date().toISOString().split('T')[0];
-        startInput.min = today;
-        endInput.min = today;
-
-        startInput.addEventListener('change', function() {
-            endInput.min = this.value;
-            if (endInput.value && endInput.value < this.value) {
-                endInput.value = this.value;
-            }
+    // Activity chip toggle
+    document.querySelectorAll('.activity-chip').forEach(chip => {
+        chip.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chip.classList.toggle('selected');
         });
-    </script>
+    });
+
+    // Date validation
+    const startInput = document.getElementById('tripFromDate');
+    const endInput   = document.getElementById('tripToDate');
+    const today = new Date().toISOString().split('T')[0];
+    startInput.min = today;
+    endInput.min = today;
+
+    startInput.addEventListener('change', function() {
+        endInput.min = this.value;
+        if (endInput.value && endInput.value < this.value) {
+            endInput.value = this.value;
+        }
+    });
+
+    // Single form submit listener — collects chips + blocks duplicates
+    let tripSubmitting = false;
+
+    document.getElementById('newTripForm').addEventListener('submit', function(e) {
+        // Collect activity chips into hidden input
+        const selected = Array.from(document.querySelectorAll('.activity-chip.selected'))
+            .map(el => el.dataset.category)
+            .join(',');
+        document.getElementById('activityTagsInput').value = selected;
+
+        // Block duplicate submissions
+        const tripname  = document.getElementById('tripName').value.trim();
+        const city      = document.getElementById('tripCity').value.trim();
+        const startdate = document.getElementById('tripFromDate').value;
+        const enddate   = document.getElementById('tripToDate').value;
+
+        if (tripname && city && startdate && enddate) {
+            if (tripSubmitting) { e.preventDefault(); return; }
+            tripSubmitting = true;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+    });
+</script>
 </body>
 
 </html>

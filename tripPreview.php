@@ -187,6 +187,8 @@ function formatDate($d) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Packmates – <?php echo htmlspecialchars($trip['tripname']); ?></title>
+    <link rel="icon" type="image/png" href="img/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="img/favicon-16x16.png" sizes="16x16" />
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="packing-list.css">
         <style>

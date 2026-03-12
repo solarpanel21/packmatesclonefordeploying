@@ -1,7 +1,21 @@
 services:
-  packmates:
-    build:
-      context: ./packmates
-      target: final
+  web:
+    build: .
     ports:
-      - 8080:80
+      - "8080:80"
+    depends_on:
+      - db
+    volumes:
+      - .:/var/www/html
+
+  db:
+    image: mariadb:10.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: packmates
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+
+volumes:
+  db_data:

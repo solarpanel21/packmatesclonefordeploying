@@ -39,6 +39,8 @@ if (isset($_POST['submit']) && isset($_POST['email']) && isset($_POST['password'
 <head>
   <meta charset="UTF-8">
   <title>PackMates | Login</title>
+  <link rel="icon" type="image/png" href="img/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="img/favicon-16x16.png" sizes="16x16" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 
