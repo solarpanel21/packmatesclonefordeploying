@@ -149,7 +149,7 @@ while ($row = $items_query->fetch_assoc()) {
 $custom_query = $mysqli->query("
     SELECT customid, customname, ischecked, quantity
     FROM customitems
-    WHERE tripid = $tripid AND userid = $user_id AND (isdismissed = 0 OR isdismissed IS NULL)
+    WHERE tripid = $tripid AND (isdismissed = 0 OR isdismissed IS NULL)
 ");
 $custom_items = [];
 while ($row = $custom_query->fetch_assoc()) {
@@ -1014,7 +1014,7 @@ document.getElementById('generateInviteBtn').addEventListener('click', function(
         body: `generate_invite=1&uses=${uses}`
     }).then(r => r.json()).then(data => {
         if (data.success) {
-            const link = `${window.location.origin}/packmates/joinTrip.php?code=${data.code}`;
+            const link = `${window.location.origin}/joinTrip.php?code=${data.code}`;
             document.getElementById('inviteLinkDisplay').value = link;
             document.getElementById('inviteLinkWrap').style.display = 'block';
         }

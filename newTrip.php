@@ -264,7 +264,7 @@ function checkNull($dataPoint) {
                     dropdown.style.display = 'block';
 
                     try {
-                    const res = await fetch(`geocode.php?name=?{encodeURIComponent(query)}&count=10`);
+                    const res = await fetch(`geocode.php?name=${encodeURIComponent(query)}&count=10`);
                     const data = await res.json();
 
                     if (data.error || !data.results || data.results.length === 0) {
@@ -294,8 +294,7 @@ function checkNull($dataPoint) {
                     document.getElementById('tripCity').value = place.name;
                     document.getElementById('tripCountry').value = place.country;
                     document.getElementById('tripAdmin1').value = place.admin1 || '';
-                    const cityName = encodeURIComponent(place.name + ', ' + place.country);
-                    document.getElementById('cityMap').src = `https://maps.google.com/maps?q=${cityName}&output=embed`;
+                    document.getElementById('cityMap').src = `https://maps.google.com/maps?q=${place.latitude},${place.longitude}&z=12&output=embed`;
                     document.getElementById('tripLat').value = place.latitude;
                     document.getElementById('tripLon').value = place.longitude;
                     document.getElementById('destinationDropdown').style.display = 'none';

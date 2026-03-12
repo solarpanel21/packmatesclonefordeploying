@@ -151,7 +151,7 @@ while ($row = $items_query->fetch_assoc()) {
 $custom_query = $mysqli->query("
     SELECT customid, customname, ischecked, quantity
     FROM customitems
-    WHERE tripid = $tripid AND userid = $user_id AND (isdismissed = 0 OR isdismissed IS NULL)
+    WHERE tripid = $tripid AND (isdismissed = 0 OR isdismissed IS NULL)
 ");
 $custom_items = [];
 while ($row = $custom_query->fetch_assoc()) {
