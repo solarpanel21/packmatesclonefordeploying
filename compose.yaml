@@ -2,7 +2,7 @@ services:
   web:
     build: .
     ports:
-      - "8080:80"
+      - "${PORT:-8080}:80"
     depends_on:
       - db
     volumes:
@@ -11,6 +11,7 @@ services:
   db:
     image: mariadb:10.4
     environment:
+      - DB_HOST=db
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: packmates
     volumes:
